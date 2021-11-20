@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
-
+import { ElLoading } from 'element-plus'
+import type { ILoadingInstance } from 'element-plus/lib/el-loading/src/loading.type'
 interface HYRequestInterceptors {
   requestInterceptor?: (config: AxiosRequestConfig) => AxiosRequestConfig
   requestInterceptorCatch?: (err: any) => any
@@ -15,6 +16,7 @@ interface HYRequestConfig extends AxiosRequestConfig {
 class HYRequest {
   instance: AxiosInstance
   interceptors?: HYRequestInterceptors
+  loading?: ILoadingInstance
 
   constructor(config: HYRequestConfig) {
     this.instance = axios.create(config)
@@ -29,15 +31,34 @@ class HYRequest {
       this.interceptors?.responseInterceptor,
       this.interceptors?.responseInterceptorCatch
     )
+    this.instance.interceptors.request.use(
+      (config) => {
+        this.loading = ElLoading.service({
+          lock: true,
+          background: 'rgba(0,0,0,.5)'
+        })
+        return config
+      },
+      (err) => {
+        return err
+      }
+    )
+    this.instance.interceptors.response.use(
+      (res) => {
+        this.loading?.close()
+        return res.data
+      },
+      (err) => {
+        this.loading?.close()
+        return err
+      }
+    )
   }
 
   request(config: AxiosRequestConfig) {
     this.instance.request(config).then((res) => {
       console.log(res)
     })
-  }
-  post() {
-    console.log('get')
   }
 }
 
