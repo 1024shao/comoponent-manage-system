@@ -12,7 +12,17 @@ app.use(router)
 app.use(store)
 
 app.mount('#app')
-axiosInstance.request({
-  method: 'GET',
-  url: 'get'
-})
+
+type DataType = {
+  data: any
+  returnCode: string
+  success: boolean
+}
+axiosInstance
+  .get<DataType>({
+    url: 'get',
+    showLoading: false
+  })
+  .then((res) => {
+    console.log(res)
+  })

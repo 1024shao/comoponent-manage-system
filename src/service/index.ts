@@ -6,7 +6,8 @@ import { BASE_URL, TIME_OUT } from './request/config'
 
 const axiosInstance = new HYRequest({
   baseURL: BASE_URL,
-  timeout: TIME_OUT
+  timeout: TIME_OUT,
+  showLoading: true
   // interceptors: {
   //   requestInterceptor: (config) => {
   //     console.log('interceptor')
